@@ -1,12 +1,15 @@
 #include "backtracking.hpp"
 #include <limits>
 
-uint64_t Backtracking::solve(Graph *graph, std::optional<uint64_t> entry_value) { 
-	std::vector<bool> visited(graph->size());
-	visited[0] = true;
-	uint64_t result = (entry_value.has_value()) ? entry_value.value() : std::numeric_limits<uint64_t>::max();
-	helper(graph, visited, 0, 1, 0, &result);
-	return result;
+uint64_t Backtracking::solve(Graph *graph,
+                             std::optional<uint64_t> entry_value) {
+  std::vector<bool> visited(graph->size());
+  visited[0] = true;
+  uint64_t result = (entry_value.has_value())
+                        ? entry_value.value()
+                        : std::numeric_limits<uint64_t>::max();
+  helper(graph, visited, 0, 1, 0, &result);
+  return result;
 }
 
 void Backtracking::helper(Graph *graph, std::vector<bool> visited, uint64_t pos,

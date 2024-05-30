@@ -1,5 +1,6 @@
 #include "backtracking.hpp"
 #include "bruteforce.hpp"
+#include "bruteforce_omp.hpp"
 #include "graph.hpp"
 #include "greedy.hpp"
 #include <bits/chrono.h>
@@ -44,8 +45,13 @@ int main(int argc, char *argv[]) {
                bt_seeded_time.count(), bt_seeded_res);
 
   Bruteforce bf;
-  auto [bf_time, bf_res] = run_strategy(&bf, &graph);
-  spdlog::info("Bruteforce solution took {}ms, result: {}", bf_time.count(),
+  auto [bf_time, bf_res] = run_strategy(&bf, &graph, greedy_res);
+  spdlog::info("Bruteforce seeded solution took {}ms, result: {}", bf_time.count(),
                bf_res);
+
+  BruteforceOMP bf_omp;
+  auto [bf_omp_time, bf_omp_res] = run_strategy(&bf_omp, &graph);
+  spdlog::info("Bruteforce OMP seeded solution took {}ms, result: {}", bf_omp_time.count(),
+               bf_omp_res);
   return 0;
 }

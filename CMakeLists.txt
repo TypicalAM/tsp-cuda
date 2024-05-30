@@ -7,11 +7,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 find_package(nlohmann_json 3.2.0 REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(OpenMP REQUIRED)
 
 set(SOURCES 
   src/main.cc
   src/graph.cc
   src/bruteforce.cc
+  src/bruteforce_omp.cc
   src/greedy.cc
   src/backtracking.cc
 )
@@ -22,4 +24,5 @@ target_link_libraries(${PROJECT_NAME}
   spdlog::spdlog
   nlohmann_json::nlohmann_json
   pthread
+  OpenMP::OpenMP_CXX
 )

@@ -2,6 +2,7 @@
 #define TSP_GRAPH
 
 #include <nlohmann/json_fwd.hpp>
+#include <optional>
 
 class Graph {
 public:
@@ -13,6 +14,13 @@ public:
 
 private:
 	std::vector<std::vector<uint64_t>> distances;
+};
+
+class TSPStrategy
+{
+    public:
+        virtual ~TSPStrategy() {}
+        virtual uint64_t solve(Graph *graph, std::optional<uint64_t> entry_value = std::nullopt) = 0;
 };
 
 #endif // TSP_GRAPH

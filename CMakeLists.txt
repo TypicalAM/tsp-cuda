@@ -11,6 +11,9 @@ find_package(spdlog REQUIRED)
 set(SOURCES 
   src/main.cc
   src/graph.cc
+  src/bruteforce.cc
+  src/greedy.cc
+  src/backtracking.cc
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

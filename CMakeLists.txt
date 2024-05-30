@@ -10,6 +10,7 @@ find_package(spdlog REQUIRED)
 
 set(SOURCES 
   src/main.cc
+  src/graph.cc
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

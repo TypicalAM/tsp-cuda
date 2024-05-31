@@ -14,7 +14,7 @@ uint16_t BruteforceOMP::solve(Graph *graph,
   std::size_t parallel_loops = (graph->size() - 1) * (graph->size() - 1);
   std::vector<uint8_t> results(parallel_loops);
 
-#pragma omp parallel for
+#pragma omp parallel for shared(results)
   for (int i = 0; i < parallel_loops; i++) {
     std::vector<uint8_t> vertices(graph->size());
     vertices[0] = 0;
@@ -44,7 +44,8 @@ uint16_t BruteforceOMP::solve(Graph *graph,
         result = instance;
     } while (std::next_permutation(vertices.begin() + 3, vertices.end()));
 
-    results[i] = result;
+#pragma omp critical
+    { results[i] = result; }
   }
 
   return *std::min_element(results.begin(), results.end());

@@ -30,15 +30,13 @@ Graph::Graph(json data) {
   }
 }
 
-std::size_t Graph::size() { return distances.size(); }
+const std::size_t Graph::size() { return distances.size(); }
 
-uint64_t Graph::distance(uint64_t from, uint64_t to) {
-  if (from > distances.size() || to > distances[from].size())
-    return 0;
+const uint64_t Graph::distance(uint64_t from, uint64_t to) {
   return distances[from][to];
 }
 
-std::string Graph::print() {
+const std::string Graph::print() {
   std::stringstream ss;
   ss << "\n";
   for (const auto row : distances) {

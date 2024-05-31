@@ -8,12 +8,14 @@ uint64_t Backtracking::solve(Graph *graph,
   uint64_t result = (entry_value.has_value())
                         ? entry_value.value()
                         : std::numeric_limits<uint64_t>::max();
-  helper(graph, visited, 0, 1, 0, &result);
+  this->visited = visited;
+  this->ans = &result;
+  this->graph = graph;
+  helper(0, 1, 0);
   return result;
 }
 
-void Backtracking::helper(Graph *graph, std::vector<bool> visited, uint64_t pos,
-                          uint64_t count, uint64_t dist, uint64_t *ans) {
+void Backtracking::helper(uint64_t pos, uint64_t count, uint64_t dist) {
   if (dist > *ans)
     return;
 
@@ -26,7 +28,7 @@ void Backtracking::helper(Graph *graph, std::vector<bool> visited, uint64_t pos,
   for (int i = 0; i < graph->size(); i++)
     if (!visited[i] && graph->distance(pos, i)) {
       visited[i] = true;
-      helper(graph, visited, i, count + 1, dist + graph->distance(pos, i), ans);
+      helper(i, count + 1, dist + graph->distance(pos, i));
       visited[i] = false;
     }
 }

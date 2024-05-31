@@ -6,21 +6,21 @@
 
 class Graph {
 public:
-	Graph(nlohmann::json data);
+  Graph(nlohmann::json data);
 
-	std::size_t size();
-	uint64_t distance(uint64_t from, uint64_t to);
-	std::string print();
+  const std::size_t size();
+  const uint64_t distance(uint64_t from, uint64_t to);
+  const std::string print();
 
 private:
-	std::vector<std::vector<uint64_t>> distances;
+  std::vector<std::vector<uint64_t>> distances;
 };
 
-class TSPStrategy
-{
-    public:
-        virtual ~TSPStrategy() {}
-        virtual uint64_t solve(Graph *graph, std::optional<uint64_t> entry_value = std::nullopt) = 0;
+class TSPStrategy {
+public:
+  virtual ~TSPStrategy() {}
+  virtual uint64_t
+  solve(Graph *graph, std::optional<uint64_t> entry_value = std::nullopt) = 0;
 };
 
 #endif // TSP_GRAPH

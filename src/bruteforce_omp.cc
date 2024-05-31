@@ -3,20 +3,20 @@
 #include <cstdint>
 #include <limits>
 
-uint64_t BruteforceOMP::solve(Graph *graph,
-                              std::optional<uint64_t> entry_value) {
-  uint64_t entry = (entry_value.has_value())
+uint16_t BruteforceOMP::solve(Graph *graph,
+                              std::optional<uint16_t> entry_value) {
+  uint16_t entry = (entry_value.has_value())
                        ? entry_value.value()
-                       : std::numeric_limits<uint64_t>::max();
+                       : std::numeric_limits<uint16_t>::max();
 
   // The first element will always be zero, since the traversal must cross
   // through a common point
   std::size_t parallel_loops = (graph->size() - 1) * (graph->size() - 1);
-  std::vector<uint64_t> results(parallel_loops);
+  std::vector<uint8_t> results(parallel_loops);
 
 #pragma omp parallel for
   for (int i = 0; i < parallel_loops; i++) {
-    std::vector<uint64_t> vertices(graph->size());
+    std::vector<uint8_t> vertices(graph->size());
     vertices[0] = 0;
     vertices[1] = i / (graph->size() - 1) + 1;
     vertices[2] = i % (graph->size() - 1) + 1;
@@ -32,10 +32,11 @@ uint64_t BruteforceOMP::solve(Graph *graph,
         vertex_idx++;
       }
 
-    uint64_t result = entry;
+    uint16_t result = entry;
 
     do {
-      uint64_t instance = 0;
+      uint16_t instance =
+          graph->distance(vertices[vertices.size() - 1], vertices[0]);
       int i = 0;
       for (; i < vertices.size() && instance < result; i++)
         instance += graph->distance(vertices[i], vertices[i + 1]);

@@ -1,13 +1,14 @@
 #include "backtracking.hpp"
+#include <cstdint>
 #include <limits>
 
-uint64_t Backtracking::solve(Graph *graph,
-                             std::optional<uint64_t> entry_value) {
+uint16_t Backtracking::solve(Graph *graph,
+                             std::optional<uint16_t> entry_value) {
   std::vector<bool> visited(graph->size());
   visited[0] = true;
-  uint64_t result = (entry_value.has_value())
+  uint16_t result = (entry_value.has_value())
                         ? entry_value.value()
-                        : std::numeric_limits<uint64_t>::max();
+                        : std::numeric_limits<uint16_t>::max();
   this->visited = visited;
   this->ans = &result;
   this->graph = graph;
@@ -15,7 +16,7 @@ uint64_t Backtracking::solve(Graph *graph,
   return result;
 }
 
-void Backtracking::helper(uint64_t pos, uint64_t count, uint64_t dist) {
+void Backtracking::helper(uint8_t pos, uint16_t count, uint16_t dist) {
   if (dist > *ans)
     return;
 

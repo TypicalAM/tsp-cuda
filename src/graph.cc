@@ -1,4 +1,5 @@
 #include "graph.hpp"
+#include <cstdint>
 #include <iomanip>
 #include <nlohmann/json.hpp>
 #include <sstream>
@@ -10,7 +11,7 @@ Graph::Graph(json data) {
   auto adjacency = data["adjacency"];
   for (json::iterator node = adjacency.begin(); node != adjacency.end();
        ++node) {
-    std::vector<uint64_t> row;
+    std::vector<uint16_t> row;
     row.resize(adjacency.size());
     distances.push_back(row);
   }
@@ -19,8 +20,8 @@ Graph::Graph(json data) {
   for (json::iterator node = adjacency.begin(); node != adjacency.end();
        ++node) {
     for (json::iterator edge = node->begin(); edge != node->end(); ++edge) {
-      uint64_t weight = (*edge)["weight"];
-      uint64_t to = (*edge)["id"];
+      uint16_t weight = (*edge)["weight"];
+      uint16_t to = (*edge)["id"];
       distances[from][to] = weight;
       distances[to][from] = weight;
     }
@@ -31,7 +32,7 @@ Graph::Graph(json data) {
 
 std::size_t Graph::size() { return distances.size(); }
 
-uint64_t Graph::distance(uint64_t from, uint64_t to) {
+uint16_t Graph::distance(uint8_t from, uint8_t to) {
   return distances[from][to];
 }
 

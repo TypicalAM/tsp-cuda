@@ -8,9 +8,9 @@ class Graph {
 public:
   Graph(nlohmann::json data);
 
-  const std::size_t size();
-  const uint64_t distance(uint64_t from, uint64_t to);
-  const std::string print();
+  std::size_t size();
+  uint64_t distance(uint64_t from, uint64_t to);
+  std::string print();
 
 private:
   std::vector<std::vector<uint64_t>> distances;

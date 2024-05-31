@@ -1,7 +1,6 @@
 #include "graph.hpp"
 #include <iomanip>
 #include <nlohmann/json.hpp>
-#include <spdlog/spdlog.h>
 #include <sstream>
 #include <string>
 
@@ -30,13 +29,13 @@ Graph::Graph(json data) {
   }
 }
 
-const std::size_t Graph::size() { return distances.size(); }
+std::size_t Graph::size() { return distances.size(); }
 
-const uint64_t Graph::distance(uint64_t from, uint64_t to) {
+uint64_t Graph::distance(uint64_t from, uint64_t to) {
   return distances[from][to];
 }
 
-const std::string Graph::print() {
+std::string Graph::print() {
   std::stringstream ss;
   ss << "\n";
   for (const auto row : distances) {

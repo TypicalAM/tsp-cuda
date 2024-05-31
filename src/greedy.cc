@@ -1,7 +1,6 @@
 #include "greedy.hpp"
 #include <cstdint>
 #include <limits>
-#include <spdlog/spdlog.h>
 
 uint64_t Greedy::solve(Graph *graph, std::optional<uint64_t> entry_value) {
   std::vector<uint64_t> vertices(graph->size());

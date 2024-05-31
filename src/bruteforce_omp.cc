@@ -2,8 +2,6 @@
 #include <algorithm>
 #include <cstdint>
 #include <limits>
-#include <spdlog/spdlog.h>
-#include <sstream>
 
 uint64_t BruteforceOMP::solve(Graph *graph,
                               std::optional<uint64_t> entry_value) {
@@ -24,7 +22,7 @@ uint64_t BruteforceOMP::solve(Graph *graph,
     vertices[2] = i % (graph->size() - 1) + 1;
     if (vertices[1] == vertices[2]) {
       results[i] = entry;
-      continue; // I know this is a loss
+      continue;
     }
 
     int vertex_idx = 3;
@@ -37,7 +35,7 @@ uint64_t BruteforceOMP::solve(Graph *graph,
     uint64_t result = entry;
 
     do {
-      uint64_t instance = graph->distance(vertices[vertices.size()-1], 0);
+      uint64_t instance = 0;
       int i = 0;
       for (; i < vertices.size() && instance < result; i++)
         instance += graph->distance(vertices[i], vertices[i + 1]);

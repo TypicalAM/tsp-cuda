@@ -1,14 +1,14 @@
 #include "backtracking.hpp"
 #include "bruteforce.hpp"
+#include "bruteforce_cuda.hpp"
 #include "bruteforce_omp.hpp"
 #include "graph.hpp"
 #include "greedy.hpp"
 #include <bits/chrono.h>
 #include <chrono>
+#include <cstdio>
 #include <fstream>
 #include <nlohmann/json.hpp>
-#include <spdlog/spdlog.h>
-#include <string>
 #include <utility>
 
 using json = nlohmann::json;
@@ -28,30 +28,35 @@ run_strategy(TSPStrategy *strategy, Graph *graph,
 
 int main(int argc, char *argv[]) {
   Graph graph(json::parse(std::ifstream(argv[1])));
-  spdlog::info(graph.print());
+  printf("%s", graph.print().c_str());
 
   Greedy greed;
   auto [greedy_time, greedy_res] = run_strategy(&greed, &graph);
-  spdlog::info("Greedy solution took {}ms, result: {}", greedy_time.count(),
-               greedy_res);
+  printf("Greedy solution took %ld ms, result: %lu\n", greedy_time.count(),
+         greedy_res);
 
   Backtracking bt;
   auto [bt_time, bt_res] = run_strategy(&bt, &graph);
-  spdlog::info("Backtracking non-seeded solution took {}ms, result: {}",
-               bt_time.count(), bt_res);
+  printf("Backtracking non-seeded solution took %ld ms, result: %lu\n",
+         bt_time.count(), bt_res);
 
   auto [bt_seeded_time, bt_seeded_res] = run_strategy(&bt, &graph, greedy_res);
-  spdlog::info("Backtracking seeded solution took {}ms, result: {}",
-               bt_seeded_time.count(), bt_seeded_res);
+  printf("Backtracking seeded solution took %ld ms, result: %lu\n",
+         bt_seeded_time.count(), bt_seeded_res);
 
   Bruteforce bf;
   auto [bf_time, bf_res] = run_strategy(&bf, &graph, greedy_res);
-  spdlog::info("Bruteforce seeded solution took {}ms, result: {}", bf_time.count(),
-               bf_res);
+  printf("Bruteforce seeded solution took %ld ms, result: %lu\n",
+         bf_time.count(), bf_res);
 
   BruteforceOMP bf_omp;
   auto [bf_omp_time, bf_omp_res] = run_strategy(&bf_omp, &graph);
-  spdlog::info("Bruteforce OMP seeded solution took {}ms, result: {}", bf_omp_time.count(),
-               bf_omp_res);
+  printf("Bruteforce OMP seeded solution took %ld ms, result: %lu\n",
+         bf_omp_time.count(), bf_omp_res);
+
+  BruteforceCUDA bf_cuda;
+  auto [bf_cuda_time, bf_cuda_res] = run_strategy(&bf_cuda, &graph);
+  printf("Bruteforce CUDA solution took %ld ms, result: %lu\n",
+         bf_cuda_time.count(), bf_cuda_res);
   return 0;
 }

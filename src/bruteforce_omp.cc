@@ -1,6 +1,7 @@
 #include "bruteforce_omp.hpp"
 #include <algorithm>
 #include <cstdint>
+#include <cstdio>
 #include <limits>
 
 uint16_t BruteforceOMP::solve(Graph *graph,
@@ -12,7 +13,7 @@ uint16_t BruteforceOMP::solve(Graph *graph,
   // The first element will always be zero, since the traversal must cross
   // through a common point
   std::size_t parallel_loops = (graph->size() - 1) * (graph->size() - 1);
-  std::vector<uint8_t> results(parallel_loops);
+  auto results = new int[parallel_loops];
 
 #pragma omp parallel for shared(results)
   for (int i = 0; i < parallel_loops; i++) {
@@ -26,21 +27,20 @@ uint16_t BruteforceOMP::solve(Graph *graph,
     }
 
     int vertex_idx = 3;
-    for (int i = 1; i < graph->size(); i++)
-      if (i != vertices[1] && i != vertices[2]) {
-        vertices[vertex_idx] = i;
+    for (int j = 1; j < graph->size(); j++)
+      if (j != vertices[1] && j != vertices[2]) {
+        vertices[vertex_idx] = j;
         vertex_idx++;
       }
 
     uint16_t result = entry;
 
     do {
-      uint16_t instance =
-          graph->distance(vertices[vertices.size() - 1], vertices[0]);
-      int i = 0;
-      for (; i < vertices.size() && instance < result; i++)
-        instance += graph->distance(vertices[i], vertices[i + 1]);
-      if (i == vertices.size() && instance < result)
+      uint16_t instance = 0;
+      int j = 0;
+      for (; j < vertices.size() && instance < result; j++)
+        instance += graph->distance(vertices[j], vertices[j + 1]);
+      if (j == vertices.size() && instance < result)
         result = instance;
     } while (std::next_permutation(vertices.begin() + 3, vertices.end()));
 
@@ -48,5 +48,7 @@ uint16_t BruteforceOMP::solve(Graph *graph,
     { results[i] = result; }
   }
 
-  return *std::min_element(results.begin(), results.end());
+  uint16_t result = *std::min_element(results, results + parallel_loops);
+  delete[] results;
+  return result;
 }

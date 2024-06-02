@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 
   BruteforceCUDA bf_cuda;
   auto [bf_cuda_time, bf_cuda_res] = run_strategy(&bf_cuda, &graph);
-  printf("Bruteforce CUDA solution took %ld ms, result: %d\n",
+  printf("Bruteforce CUDA seeded solution took %ld ms, result: %d\n",
          bf_cuda_time.count(), bf_cuda_res);
   return 0;
 }

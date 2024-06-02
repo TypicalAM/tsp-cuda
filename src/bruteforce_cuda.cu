@@ -34,24 +34,33 @@ __global__ void solve_kernel(uint16_t *distances, uint8_t *permutations,
                              uint16_t *results, std::size_t vertex_count,
                              uint16_t entry) {
   int tid = threadIdx.x + blockIdx.x * blockDim.x;
-  if (tid >= (vertex_count - 1) * (vertex_count - 1))
+  if (tid >= (vertex_count - 1) * (vertex_count - 1) * (vertex_count - 1) *
+                 (vertex_count - 1))
     return;
 
-  uint8_t second_vertex = tid % (vertex_count - 1);
-  uint8_t third_vertex = (tid - second_vertex) / (vertex_count - 1);
-  if (second_vertex == third_vertex) {
+  int N = (vertex_count - 1);
+  int I = tid / (N * N * N);
+  int J = (tid % (N * N * N)) / (N * N);
+  int K = (tid % (N * N)) / N;
+  int L = tid % N;
+
+  bool discard =
+      (I == J) || (I == K) || (I == L) || (J == K) || (J == L) || (K == L);
+  if (discard) {
     results[tid] = std::numeric_limits<uint16_t>::max();
     return;
   }
 
   uint8_t *vertices = permutations + tid * sizeof(uint8_t) * vertex_count;
   vertices[0] = 0;
-  vertices[1] = second_vertex + 1;
-  vertices[2] = third_vertex + 1;
+  vertices[1] = I + 1;
+  vertices[2] = J + 1;
+  vertices[3] = K + 1;
+  vertices[4] = L + 1;
 
-  int vertex_idx = 3;
+  int vertex_idx = 5;
   for (auto i = 1; i < vertex_count; i++)
-    if (i != second_vertex + 1 && i != third_vertex + 1) {
+    if (i != I + 1 && i != J + 1 && i != K + 1 && i != L + 1) {
       vertices[vertex_idx] = i;
       vertex_idx++;
     }
@@ -62,9 +71,10 @@ __global__ void solve_kernel(uint16_t *distances, uint8_t *permutations,
     int i = 0;
     for (; i < vertex_count && instance < result; i++)
       instance += distances[vertices[i] * vertex_count + vertices[i + 1]];
-    if (i == vertex_count && instance < result)
+    if (i == vertex_count && instance < result) {
       result = instance;
-  } while (next_permutation(vertices + 3, vertices + vertex_count));
+    }
+  } while (next_permutation(vertices + 5, vertices + vertex_count));
 
   results[tid] = result;
 }
@@ -87,7 +97,8 @@ uint16_t BruteforceCUDA::solve(Graph *graph,
              sizeof(uint16_t) * graph->size() * graph->size(),
              cudaMemcpyHostToDevice);
 
-  const std::size_t MAX_THREADS = (graph->size() - 1) * (graph->size() - 1);
+  const std::size_t MAX_THREADS = (graph->size() - 1) * (graph->size() - 1) *
+                                  (graph->size() - 1) * (graph->size() - 1);
   uint8_t *device_permutations;
   cudaMalloc(&device_permutations,
              sizeof(uint8_t) * graph->size() * MAX_THREADS);
@@ -99,9 +110,8 @@ uint16_t BruteforceCUDA::solve(Graph *graph,
   solve_kernel<<<block_count, BLOCK_SIZE>>>(device_distances,
                                             device_permutations, device_results,
                                             graph->size(), entry);
-  cudaError_t err = cudaDeviceSynchronize();
 
-  // Check for any errors during kernel execution
+  cudaError_t err = cudaDeviceSynchronize();
   if (err != cudaSuccess) {
     printf("CUDA error: %s\n", cudaGetErrorString(err));
     exit(1);
